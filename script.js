@@ -29,18 +29,39 @@ function addTarefa(nome) {
 
 }
 
-function editTarefa(inputTarefa,nome) {}
+function editTarefa(inputTarefa,nome) {
+    inputTarefa.disabled = !inputTarefa.disabled
+    if (!inputTarefa.disabled) {
+        const index = todos.indexOf(nome)
+        todos[index] = inputTarefa.value
+        saveTodos() 
+    }
+
+}
+
 function removerTarefa(item,nome) {
     item.parentNode.removeChild(item)
+    const index = todos.indexOf(nome)
+    todos.splice(index,1)
+    saveTodos()
+
 }
 
 function checkInput() {
     const inputValue = input.value
     if (inputValue !== '') {
         addTarefa(inputValue)
+        todos.push(inputValue)
+        //salvando no localstorage
+        localStorage.setItem('todos', JSON.stringify(todos))
         input.value = ''
         input.focus() 
+
     }
+}
+
+function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos))
 }
 
 addButton.addEventListener('click', checkInput)
@@ -49,3 +70,8 @@ input.addEventListener('keypress', (e) => {
         checkInput()
     }
 })
+
+const todos = JSON.parse(localStorage.getItem('todos')) || [] 
+for (const task of todos) {
+    addTarefa(task)
+}
